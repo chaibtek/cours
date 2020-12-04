@@ -1,0 +1,8 @@
+{% extends 'base.html.twig '%}
+
+{% block body %}
+{% for tab in tabs %}
+    {{ tab|nl2br }}
+{% endfor %}
+
+{% endblock %}
