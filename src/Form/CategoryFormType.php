@@ -16,7 +16,7 @@ class CategoryFormType extends AbstractType
             ->add('name')
             ->add('description')
             ->add('slug')
-            ->add('save', SubmitType::class, ['label' => "Ajouter une catégorie"])
+            ->add('save', SubmitType::class/*['label' => "Ajouter une catégorie"]*/)
         ;
     }
 

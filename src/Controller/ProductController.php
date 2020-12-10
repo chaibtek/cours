@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\Category;
+use App\Form\ProductFormType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +23,39 @@ class ProductController extends  AbstractController
 {
    
     
+   /**
+     * @Route("/showProduct/{id}", name="showProduct")
+     */
+    public function index(ProductRepository $productRepository): Response
+    {
+        $listeProduct = $productRepository->findAll();
+
+        return $this->render('product/index.html.twig', [
+            'listeProduct' => $listeProduct,
+        ]);
+    }
+
+    /**
+     * @Route("/product/edit/{id}", name="editProduct")
+     */
+    public function editProduct(Request $request , EntityManagerInterface $em , $id) : Response
+    {
+        $product = $em->getRepository(Product::class)->find($id);
+        $form = $this->createForm(ProductFormType::class,$product);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $em->persist($product);
+            $em->flush();
+
+            return $this->redirectToRoute("success");
+        }
+       
+        return $this->render('product/edit.html.twig', ['form' => $form->createView()]);
+    }
+
     /**
      * @Route("/product/add",name="ajoutProduct")
      */
