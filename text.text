@@ -1,0 +1,5 @@
+php bin/console make:entity Product > met à jour me Product.php
+
+php bin/console make:migration > Crée le fichier de migration 
+
+php bin/console doctrine:migrations:migrate > modifie la BDD
