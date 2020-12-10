@@ -1,8 +1,21 @@
 {% extends 'base.html.twig '%}
 
 {% block body %}
-{% for tab in tabs %}
-    {{ tab|nl2br }}
-{% endfor %}
+<div class="container">
+    <div class="row" style="border:1px solid black">
+        <div class="col" style="border:1px solid red">
+         
+            {% for product in products %}
+                {{ product.name }} // {{ product.price }} / {{ product.slug }}<br>
+            {% endfor %}
+
+        </div>
+
+    
+    </div>
+
+</div>
+
+
 
 {% endblock %}
