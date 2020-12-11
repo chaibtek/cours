@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Hello product {% endblock %}
+
+
+{% block body %}
+	<div class="container">
+    
+    {{ form_start(form)}}
+
+	{{ form_row(form._token) }}
+
+    {{ form_label(form.name,'nom produit') }}
+    {{ form_widget(form.name,{'attr':{'maxlength':'50'}}) }}
+
+    {{ form_label(form.price,'Prix produit') }}
+    {{ form_widget(form.price,{'attr':{'maxlength':'50'}}) }}
+
+    {{ form_label(form.img,'Image') }}
+    {{ form_widget(form.img,{'attr':{'maxlength':'255'}}) }}
+
+    {{ form_label(form.category,'Catégorie') }}
+    {{ form_widget(form.category)}}
+
+    {{ form_label(form.save,'Ajouter produit') }}
+    {{ form_widget(form.save) }}
+
+    {{ form_end(form, {'render_rest': false}) }}
+
+		</div>
+{% endblock %}

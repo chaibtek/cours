@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,20 @@ class CategoryController extends AbstractController
 
         return $this->render('category/index.html.twig', [
             'listeCategory' => $listeCategory,
+        ]);
+    }
+
+    /**
+     * @Route("/categoryProduct/{id}", name="categoryProduct")
+     */
+    public function productByCategory(ProductRepository $productRepository,$id): Response
+    {
+        $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
+       
+        $listeProduct = $productRepository->findBy( ['category' => $category]);
+        
+        return $this->render('category/categoryProducts.html.twig', [
+            'listeProduct' => $listeProduct,
         ]);
     }
 

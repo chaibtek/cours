@@ -20,7 +20,9 @@ class ProductFormType extends AbstractType
             ->add('name',TextType::class)
             ->add('price', IntegerType::class)
             ->add('slug', TextType::class)
-            ->add('category',EntityType::class,
+            ->add('img', TextType::class)
+            ->add('category',
+            EntityType::class,
             [
                 'class' => Category::class,
                 'choice_label' => 'name',

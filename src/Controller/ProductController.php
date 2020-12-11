@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProductController extends  AbstractController
 {
@@ -26,12 +27,11 @@ class ProductController extends  AbstractController
    /**
      * @Route("/showProduct/{id}", name="showProduct")
      */
-    public function index(ProductRepository $productRepository): Response
+    public function index(Product $product,$id , EntityManagerInterface $em): Response
     {
-        $listeProduct = $productRepository->findAll();
-
-        return $this->render('product/index.html.twig', [
-            'listeProduct' => $listeProduct,
+        
+        return $this->render('product/detailProduit.html.twig', [
+            'product' => $product,
         ]);
     }
 
@@ -47,6 +47,7 @@ class ProductController extends  AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
+            $product= $form->getData();
             $em->persist($product);
             $em->flush();
 
@@ -59,41 +60,18 @@ class ProductController extends  AbstractController
     /**
      * @Route("/product/add",name="ajoutProduct")
      */
-    public function addProduct(Request $request, EntityManagerInterface $em): Response
+    public function addProduct(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
-        $product = new Product();
-        $builder = $this->createFormBuilder();
-        $builder->add('name',TextType::class)
-        ->add('price', IntegerType::class)
-        ->add('slug', TextType::class)
-        ->add(
-            'category',
-            EntityType::class,
-            [
-            'class' => Category::class,
-            'choice_label' => 'name',
-            'placeholder' => 'Choisir une catégorie',
-            'label' => 'Categorie',
-            ]
-        )
-        ->add(
-            'save',
-            SubmitType::class,
-            ['label' => "Ajouter produit"]
-        );
-
-        $form = $builder->getForm();
-
+        $product = new Product;
+        $form = $this->createForm(ProductFormType::class,$product);
+     
         $form->handleRequest($request);
+        
         // Soumit et valid
         if($form->isSubmitted() && $form->isValid())
         {
-            $data = $form->getData();
-            $product = new Product();
-            $product->setName($data['name'])
-            ->setPrice($data['price'])
-            ->setSlug($data['slug'])
-            ->setCategory($data['category']);
+            $product->setSlug($slugger->slug($product->getName()));
+
 
             $em->persist($product);
             $em->flush();
@@ -101,9 +79,19 @@ class ProductController extends  AbstractController
             return $this->redirectToRoute('success');
         }
 
-        return $this->render('product/index.html.twig', [
+        return $this->render('product/add.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
+    /**
+     * @Route("/product/delete/{id}", name= "deleteProduct")
+     */
+    public function deleteProduct(ProductRepository $productRepository,EntityManagerInterface $em , $id) : Response
+    {
+        $product = $productRepository->find($id);
+        $em->remove($product);
+        $em->flush();
+        return $this->redirectToRoute('success');
+    }
 }
