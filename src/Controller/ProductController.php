@@ -7,18 +7,20 @@ use App\Entity\Category;
 use App\Form\ProductFormType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ProductController extends  AbstractController
 {
@@ -40,6 +42,9 @@ class ProductController extends  AbstractController
      */
     public function editProduct(Request $request , EntityManagerInterface $em , $id) : Response
     {
+        $path = $this->getParameter('app.dir.public') . '/img';
+
+
         $product = $em->getRepository(Product::class)->find($id);
         $form = $this->createForm(ProductFormType::class,$product);
 
@@ -48,6 +53,33 @@ class ProductController extends  AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $product= $form->getData();
+            $file = $form['img']->getData();
+
+           
+            if($file)
+            {
+                // Récup nom de fichier sans extension
+                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+
+                $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
+                // set nom dans la propriété Img
+                $product->setImg($newFilename);
+
+                //Déplacer le fichier dans le répertoire public + sous répertoire
+                try{
+                    $file->move(
+                        $path,
+                        $newFilename
+                    );
+                }catch(FileException $e)
+                {
+                    echo $e->getMessage();
+                }
+            }
+
+
+
+
             $em->persist($product);
             $em->flush();
 
@@ -60,8 +92,12 @@ class ProductController extends  AbstractController
     /**
      * @Route("/product/add",name="ajoutProduct")
      */
-    public function addProduct(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function addProduct(KernelInterface $appKernel,Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
+        //$path = $appKernel->getProjectDir() . '/public';
+
+        $path = $this->getParameter('app.dir.public') . '/img';
+
         $product = new Product;
         $form = $this->createForm(ProductFormType::class,$product);
      
@@ -71,6 +107,29 @@ class ProductController extends  AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $product->setSlug($slugger->slug($product->getName()));
+
+            $file = $form['img']->getData();
+
+            if($file)
+            {
+                // Récup nom de fichier sans extension
+                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+
+                $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
+                // set nom dans la propriété Img
+                $product->setImg($newFilename);
+
+                //Déplacer le fichier dans le répertoire public + sous répertoire
+                try{
+                    $file->move(
+                        $path,
+                        $newFilename
+                    );
+                }catch(FileException $e)
+                {
+                    echo $e->getMessage();
+                }
+            }
 
 
             $em->persist($product);

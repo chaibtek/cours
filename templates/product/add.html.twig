@@ -16,7 +16,7 @@
     {{ form_label(form.price,'Prix produit') }}
     {{ form_widget(form.price,{'attr':{'maxlength':'50'}}) }}
 
-    {{ form_label(form.img,'Image') }}
+    {{ form_label(form.img,'') }}
     {{ form_widget(form.img,{'attr':{'maxlength':'255'}}) }}
 
     {{ form_label(form.category,'Catégorie') }}
@@ -28,4 +28,20 @@
     {{ form_end(form, {'render_rest': false}) }}
 
 		</div>
+
+
+
+
+        <script>
+         document.addEventListener("DOMContentLoaded", function () {
+            var fichierRecto = document.querySelector('#product_form_img')
+         var labelRecto = fichierRecto.nextElementSibling
+
+        fichierRecto.addEventListener('change', function (e) {
+            const fileName = fichierRecto.value;
+            labelRecto.innerHTML = fileName;
+        })
+
+        });
+        </script>
 {% endblock %}
