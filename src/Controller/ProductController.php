@@ -25,20 +25,43 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class ProductController extends  AbstractController
 {
    
-    
-   /**
-     * @Route("/showProduct/{id}", name="showProduct")
+    /**
+     * @Route("/produit/{id}-{slug}", name="vueProduit")
      */
-    public function index(Product $product,$id , EntityManagerInterface $em): Response
+    /*public function index(Product $product,$id , EntityManagerInterface $em): Response
     {
         
+        return $this->render('product/detailProduit.html.twig', [
+            'product' => $product,
+        ]);
+    }*/
+
+
+
+   /**
+     * @Route("/admin/showProduct/{id}", name="showProduct")
+     */
+    /*public function showProduct(Product $product,$id , EntityManagerInterface $em): Response
+    {
+        
+        return $this->render('product/detailProduit.html.twig', [
+            'product' => $product,
+        ]);
+    }*/
+
+      /**
+     * liste le produits d'une catégorie
+     * @Route("/admin/product/detail/{id}", name="detailProduit")
+     */
+    public function categoryProductList(Product $product): Response
+    {
         return $this->render('product/detailProduit.html.twig', [
             'product' => $product,
         ]);
     }
 
     /**
-     * @Route("/product/edit/{id}", name="editProduct")
+     * @Route("/admin/product/edit/{id}", name="editProduct")
      */
     public function editProduct(Request $request , EntityManagerInterface $em , $id) : Response
     {
@@ -90,7 +113,7 @@ class ProductController extends  AbstractController
     }
 
     /**
-     * @Route("/product/add",name="ajoutProduct")
+     * @Route("/admin/product/add",name="ajoutProduct")
      */
     public function addProduct(KernelInterface $appKernel,Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
@@ -109,6 +132,7 @@ class ProductController extends  AbstractController
             $product->setSlug($slugger->slug($product->getName()));
 
             $file = $form['img']->getData();
+            $idCategory = $form['category']->getData()->getId();
 
             if($file)
             {
@@ -135,7 +159,9 @@ class ProductController extends  AbstractController
             $em->persist($product);
             $em->flush();
 
-            return $this->redirectToRoute('success');
+            $this->addFlash('success', 'Produit ajouté avec succès');
+
+            return $this->redirectToRoute('categoryProduct', ['id' => $idCategory]);
         }
 
         return $this->render('product/add.html.twig', [
@@ -144,13 +170,18 @@ class ProductController extends  AbstractController
     }
 
     /**
-     * @Route("/product/delete/{id}", name= "deleteProduct")
+     * @Route("/admin/product/delete/{id}", name= "deleteProduct")
      */
-    public function deleteProduct(ProductRepository $productRepository,EntityManagerInterface $em , $id) : Response
+    public function deleteProduct(Product $product,EntityManagerInterface $em , $id) : Response
     {
-        $product = $productRepository->find($id);
+        //$product = $productRepository->find($id);
+        $idCategory = $product->getCategory()->getId();
+        // paramConverter
         $em->remove($product);
         $em->flush();
-        return $this->redirectToRoute('success');
+
+        $this->addFlash('success', 'Produit effacé avec succès');
+
+        return $this->redirectToRoute('categoryProduct', ['id' => $idCategory]);
     }
 }

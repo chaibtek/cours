@@ -28,7 +28,7 @@
         {% for produit in listeProduct %}
         <tr>
             <td>
-                  {{produit.name}} </td>
+             <a href="{{path('detailProduit',{'id':produit.id})}}">  {{produit.name}} </a>  </td>
             <td>{{produit.price}}</td>
             <td><a href="{{path('editProduct',{'id':produit.id})}}">
                     Editer Produit</a>
