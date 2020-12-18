@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\Category;
 use App\Form\CategoryFormType;
 use App\Repository\CategoryRepository;
@@ -18,6 +19,7 @@ class CategoryController extends AbstractController
      */
     public function index(CategoryRepository $categoryRepository): Response
     {
+        // $this->denyAccessUnlessGranted('IS_AUTENTICATED_FULLY')
         $listeCategory = $categoryRepository->findAll();
 
         return $this->render('category/index.html.twig', [
@@ -28,29 +30,31 @@ class CategoryController extends AbstractController
     /**
      * @Route("/admin/category/product/{id}", name="categoryProduct")
      */
-    public function productByCategory(ProductRepository $productRepository,$id): Response
+    public function productByCategory(ProductRepository $productRepository, $id): Response
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-       
-        $listeProduct = $productRepository->findBy( ['category' => $category]);
-        
+
+        $listeProduct = $productRepository->findBy(['category' => $category]);
+
         return $this->render('category/categoryProducts.html.twig', [
             'listeProduct' => $listeProduct,
         ]);
     }
 
-       /**
+    /**
      * @Route("/admin/category/add",name="ajoutCategory")
      */
-    public function addCategory(Request $request, EntityManagerInterface $em )
+    public function addCategory(Request $request, EntityManagerInterface $em)
     {
+        //$user = $this->getUser();
+        //dd($user->getRoles());
+        //$this->denyAccessUnlessGranted('ROLE_ADMIN');
         $category = new Category;
-        $form = $this->createForm(CategoryFormType::class,$category);
+        $form = $this->createForm(CategoryFormType::class, $category);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($category);
             $em->flush();
 
@@ -58,31 +62,27 @@ class CategoryController extends AbstractController
 
             return $this->redirectToRoute("category");
         }
-       
+
         return $this->render('category/add.html.twig', ['form' => $form->createView()]);
     }
 
     /**
      * @Route("/admin/category/edit/{id}",name="editCategory")
      */
-    public function editCategory(Request $request , EntityManagerInterface $em , $id)
+    public function editCategory(Request $request, EntityManagerInterface $em, $id)
     {
         $category = $em->getRepository(Category::class)->find($id);
-        $form = $this->createForm(CategoryFormType::class,$category);
+        $form = $this->createForm(CategoryFormType::class, $category);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($category);
             $em->flush();
 
             return $this->redirectToRoute("success");
         }
-       
+
         return $this->render('category/edit.html.twig', ['form' => $form->createView()]);
     }
-
-  
-
 }

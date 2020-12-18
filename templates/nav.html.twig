@@ -1,35 +1,51 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Logo</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+	<a class="navbar-brand" href="#">Logo</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home</a>
-      </li>
-      <li class="nav-item">
-                <a class="nav-link" href="{{path('category')}}">Liste catégories</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{path('ajoutProduct')}}">Ajout Produit</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{path('ajoutCategory')}}">Ajout Catégorie </a>
-      </li>
-      
-    </ul>
-       {% if app.user %}
-         <div class="d-flex">
-         {{ app.user.email }}
-        <button class="btn btn-outline-success" type="submit">   <a href="{{ path('app_logout') }}">Déconnexion</a></button>
-        </div>
-      {% endif %}
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item active">
+				<a class="nav-link" href="/">Home</a>
+			</li>
+			{#{% if is_granted('ROLE_ADMIN') %}{% endif %}#}
 
-      {% if app.user is null %}
-        <button class="btn btn-outline-success" type="submit">   <a href="{{ path('app_login') }}">Connexion</a></button>
-      {% endif %}
-      
-  </div>
+
+			{% if app.user %}
+				<li class="nav-item">
+					<a class="nav-link" href="{{path('category')}}">Liste catégories</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{{path('ajoutProduct')}}">Ajout Produit</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{{path('ajoutCategory')}}">Ajout Catégorie
+					</a>
+				</li>
+			{% endif %}
+		</ul>
+		{% if app.user %}
+			<div class="d-flex">
+
+				<a href="{{ path('app_logout') }}">
+					<p class="btn btn-outline-success">Se deconnecter
+																																																						         de
+						{{ app.user.email }}
+					</p>
+				</a>
+
+			</div>
+		{% endif %}
+
+		{% if app.user is null %}
+
+			<a href="{{ path('app_login') }}">
+				<p class="btn btn-outline-success">Connexion
+				</p>
+			</a>
+
+		{% endif %}
+
+	</div>
 </nav>
