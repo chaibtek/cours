@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+
+{% block title %}
+	Liste User
+{% endblock %}
+
+{% block body %}
+	{% if is_granted('ROLE_ADMIN') %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">Utilisateur</th>
+					<th scope="col">Email</th>
+				</tr>
+			</thead>
+			{% for user in users %}
+				<tr>
+					<th scope="row">{{ user.id }}</th>
+					<th scope="row">{{ user.username }}</th>
+				</tr>
+			{% endfor %}
+		{% endif %}
+	{% endblock %}

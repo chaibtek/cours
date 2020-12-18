@@ -22,9 +22,12 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
+/**
+ * @Route("/admin",name="admin_")
+ */
 class ProductController extends  AbstractController
 {
-   
+
     /**
      * @Route("/produit/{id}-{slug}", name="vueProduit")
      */
@@ -38,8 +41,8 @@ class ProductController extends  AbstractController
 
 
 
-   /**
-     * @Route("/admin/showProduct/{id}", name="showProduct")
+    /**
+     * @Route("/showProduct/{id}", name="showProduct")
      */
     /*public function showProduct(Product $product,$id , EntityManagerInterface $em): Response
     {
@@ -49,9 +52,9 @@ class ProductController extends  AbstractController
         ]);
     }*/
 
-      /**
+    /**
      * liste le produits d'une catégorie
-     * @Route("/admin/product/detail/{id}", name="detailProduit")
+     * @Route("/product/detail/{id}", name="detailProduit")
      */
     public function categoryProductList(Product $product): Response
     {
@@ -61,41 +64,38 @@ class ProductController extends  AbstractController
     }
 
     /**
-     * @Route("/admin/product/edit/{id}", name="editProduct")
+     * @Route("/product/edit/{id}", name="editProduct")
      */
-    public function editProduct(Request $request , EntityManagerInterface $em , $id) : Response
+    public function editProduct(Request $request, EntityManagerInterface $em, $id): Response
     {
         $path = $this->getParameter('app.dir.public') . '/img';
 
 
         $product = $em->getRepository(Product::class)->find($id);
-        $form = $this->createForm(ProductFormType::class,$product);
+        $form = $this->createForm(ProductFormType::class, $product);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $product= $form->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
             $file = $form['img']->getData();
 
-           
-            if($file)
-            {
+
+            if ($file) {
                 // Récup nom de fichier sans extension
-                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
                 $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
                 // set nom dans la propriété Img
                 $product->setImg($newFilename);
 
                 //Déplacer le fichier dans le répertoire public + sous répertoire
-                try{
+                try {
                     $file->move(
                         $path,
                         $newFilename
                     );
-                }catch(FileException $e)
-                {
+                } catch (FileException $e) {
                     echo $e->getMessage();
                 }
             }
@@ -108,49 +108,46 @@ class ProductController extends  AbstractController
 
             return $this->redirectToRoute("success");
         }
-       
+
         return $this->render('product/edit.html.twig', ['form' => $form->createView()]);
     }
 
     /**
-     * @Route("/admin/product/add",name="ajoutProduct")
+     * @Route("/product/add",name="ajoutProduct")
      */
-    public function addProduct(KernelInterface $appKernel,Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function addProduct(KernelInterface $appKernel, Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         //$path = $appKernel->getProjectDir() . '/public';
 
         $path = $this->getParameter('app.dir.public') . '/img';
 
         $product = new Product;
-        $form = $this->createForm(ProductFormType::class,$product);
-     
+        $form = $this->createForm(ProductFormType::class, $product);
+
         $form->handleRequest($request);
-        
+
         // Soumit et valid
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $product->setSlug($slugger->slug($product->getName()));
 
             $file = $form['img']->getData();
             $idCategory = $form['category']->getData()->getId();
 
-            if($file)
-            {
+            if ($file) {
                 // Récup nom de fichier sans extension
-                $originalFilename = pathinfo($file->getClientOriginalName(),PATHINFO_FILENAME);
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
                 $newFilename = $originalFilename . '-' . uniqid() . '.' . $file->guessExtension();
                 // set nom dans la propriété Img
                 $product->setImg($newFilename);
 
                 //Déplacer le fichier dans le répertoire public + sous répertoire
-                try{
+                try {
                     $file->move(
                         $path,
                         $newFilename
                     );
-                }catch(FileException $e)
-                {
+                } catch (FileException $e) {
                     echo $e->getMessage();
                 }
             }
@@ -170,9 +167,9 @@ class ProductController extends  AbstractController
     }
 
     /**
-     * @Route("/admin/product/delete/{id}", name= "deleteProduct")
+     * @Route("/product/delete/{id}", name= "deleteProduct")
      */
-    public function deleteProduct(Product $product,EntityManagerInterface $em , $id) : Response
+    public function deleteProduct(Product $product, EntityManagerInterface $em, $id): Response
     {
         //$product = $productRepository->find($id);
         $idCategory = $product->getCategory()->getId();

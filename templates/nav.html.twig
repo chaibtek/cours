@@ -9,18 +9,22 @@
 			<li class="nav-item active">
 				<a class="nav-link" href="/">Home</a>
 			</li>
-			{#{% if is_granted('ROLE_ADMIN') %}{% endif %}#}
 
+			{% if is_granted('ROLE_ADMIN') %}
+				<li class="nav-item active">
+					<a class="nav-link" href="{{path('userList')}}">Administration Utilisateurs</a>
+				</li>
+			{% endif %}
 
-			{% if app.user %}
+			{% if is_granted('ROLE_USER') %}
 				<li class="nav-item">
-					<a class="nav-link" href="{{path('category')}}">Liste catégories</a>
+					<a class="nav-link" href="{{path('admin_category')}}">Liste catégories</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{path('ajoutProduct')}}">Ajout Produit</a>
+					<a class="nav-link" href="{{path('admin_ajoutProduct')}}">Ajout Produit</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{path('ajoutCategory')}}">Ajout Catégorie
+					<a class="nav-link" href="{{path('admin_ajoutCategory')}}">Ajout Catégorie
 					</a>
 				</li>
 			{% endif %}
@@ -30,7 +34,7 @@
 
 				<a href="{{ path('app_logout') }}">
 					<p class="btn btn-outline-success">Se deconnecter
-																																																						         de
+																																																																																																						         de
 						{{ app.user.email }}
 					</p>
 				</a>

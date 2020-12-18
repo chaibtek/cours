@@ -12,10 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @Route("/admin",name="admin_")
+ */
 class CategoryController extends AbstractController
 {
     /**
-     * @Route("/admin/category", name="category")
+     * @Route("/category", name="category")
      */
     public function index(CategoryRepository $categoryRepository): Response
     {
@@ -28,7 +31,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/admin/category/product/{id}", name="categoryProduct")
+     * @Route("/category/product/{id}", name="categoryProduct")
      */
     public function productByCategory(ProductRepository $productRepository, $id): Response
     {
@@ -42,7 +45,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/admin/category/add",name="ajoutCategory")
+     * @Route("/category/add",name="ajoutCategory")
      */
     public function addCategory(Request $request, EntityManagerInterface $em)
     {
@@ -67,7 +70,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/admin/category/edit/{id}",name="editCategory")
+     * @Route("/category/edit/{id}",name="editCategory")
      */
     public function editCategory(Request $request, EntityManagerInterface $em, $id)
     {
