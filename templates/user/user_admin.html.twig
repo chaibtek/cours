@@ -1,24 +1,35 @@
 {% extends "base.html.twig" %}
-
-
-{% block title %}
-	Liste User
-{% endblock %}
-
 {% block body %}
 	{% if is_granted('ROLE_ADMIN') %}
-		<table class="table">
-			<thead>
-				<tr>
-					<th scope="col">Utilisateur</th>
-					<th scope="col">Email</th>
-				</tr>
-			</thead>
-			{% for user in users %}
-				<tr>
-					<th scope="row">{{ user.id }}</th>
-					<th scope="row">{{ user.username }}</th>
-				</tr>
+		<div class="container">
+
+			<a href="{{ path('userAdd')}}">
+				<p class="btn btn-outline-success my-2 my-sm-0">
+					Ajouter un utilisateur</p>
+			</a>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Utilisateur</th>
+						<th scope="col">Rôle</th>
+						<th scope="col">Email</th>
+						<th scope="col">Editer</th>
+						<th scope="col">Effacer</th>
+					</tr>
+				</thead>
+				{% for user in users %}
+					<tr>
+						<th scope="row">{{ user.id }}</th>
+						<th scope="row">{{ user.roles[0] }}</th>
+						<th scope="row">{{ user.username }}</th>
+						<th>
+							<a href="{{path('userEdit',{id:user.id})}}">Editer</a>
+						</th>
+						<th>
+							<a href="">Effacer</a>
+						</th>
+					</tr>
+				</div>
 			{% endfor %}
 		{% endif %}
 	{% endblock %}

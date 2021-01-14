@@ -56,7 +56,7 @@ class ProductController extends  AbstractController
      * liste le produits d'une catégorie
      * @Route("/product/detail/{id}", name="detailProduit")
      */
-    public function categoryProductList(Product $product): Response
+    public function detailProduit(Product $product): Response
     {
         return $this->render('product/detailProduit.html.twig', [
             'product' => $product,
@@ -181,4 +181,71 @@ class ProductController extends  AbstractController
 
         return $this->redirectToRoute('categoryProduct', ['id' => $idCategory]);
     }
+
+    /**
+     * liste le produits d'une catégorie
+     * @Route("/product/testDQL/{id}", name="testDQL")
+     */
+    /*public function testDQL(Product $product, EntityManagerInterface $em, $id): Response
+    {
+        // expérimental
+        // $rsm = new ResultSetMapping();
+        // // build rsm here
+        // $query = $em->createNativeQuery('SELECT id, name FROM product WHERE id = 1', $rsm);
+        // //$query->setParameter(1, 1);
+        // $data = $query->getSingleResult();
+        // dd($data);
+
+
+
+        // $rep = $em->getRepository(Product::class);
+        // $data = $rep->findSQLPure($id);
+        // dd($data);
+
+        // $rep = $em->getRepository(Product::class);
+        // $data = $rep->findOneBySomeField($id);
+        // dd($data);
+
+
+        // DQL
+        // $query = $em->createQuery(
+        //     "
+        //     select p 
+        //     FROM App\Entity\Product p 
+        //     WHERE p.id =  :id
+        //     "
+        // )->setParameter('id', $id);
+
+        // $data = $query->getOneOrNullResult(); //   ->getResult();
+        // dd($data);
+
+        return $this->render('product/detailProduit.html.twig', [
+            'product' => $product,
+        ]);
+    }
+
+    /**
+     * liste le produits d'une catégorie
+     * @Route("/product/testDQLJoin/{id}", name="testDQLJoin")
+     */
+    /*public function testDQLJoin(Product $product, EntityManagerInterface $em, $id): Response
+    {
+        // DQL
+        $query = $em->createQuery(
+            "
+            select c, p 
+            FROM App\Entity\Category c 
+            JOIN c.products p
+            WHERE c.id =  :id
+            "
+        )->setParameter('id', $id);
+
+        // $data = $query->getArrayResult();
+        $data = $query->getResult()[0]->getProducts();
+        dd($data);
+
+        return $this->render('product/detailProduit.html.twig', [
+            'product' => $product,
+        ]);
+    }*/
 }

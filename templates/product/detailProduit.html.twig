@@ -1,24 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail Product!{% endblock %}
+{% block title %}Détail Product!
+{% endblock %}
 
 {% block body %}
 
-<div class="container">
-    <div class="row">
-        <div class="col">
+	<div class="container">
+		<div class="row">
+			<div class="col">
 
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top"
-                    src="/img/{{product.img}}"
-                    alt="Dét" width="500">
-                <div class="card-body">
-                    <h5 class="card-title">{{product.name}}</h5>
-                    <p class="card-text">{{product.price}}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+				<div class="card" style="width: 18rem;">
+					<img class="card-img-top" src="/img/{{product.img}}" alt="Dét" width="500">
+					<div class="card-body">
+						<h5 class="card-title">{{product.name}}</h5>
+						<p class="card-text">{{product.price}}</p>
+						{% if is_granted('ROLE_STAFF') %}
+							<a class="btn btn-info" href="{{path('admin_editProduct',{'id':product.id})}}" class="btn btn-primary">Editer</a>
+						{% endif %}
+						<a class="btn btn-primary" href="{{ path('addToCart', {id:product.id})}}">
+							Ajouter au panier</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
